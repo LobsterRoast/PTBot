@@ -34,7 +34,8 @@ print("Success.\n")
 # be easily changed to any timezone just by changing the timedelta.
 # ---------------------------------------------------------------------------------
 tz = datetime.timezone(datetime.timedelta(hours = -5), "EST")
-print(f"Operating using {tz.tzname} time.")
+dt = datetime.datetime(1, 1, 1, tzinfo=tz)
+print(f"Operating using {tz.tzname(dt)} time.")
 def est_now():
 	global tz
 	return datetime.datetime.now(tz)
@@ -43,7 +44,7 @@ day = est_now().day
 minute = est_now().minute
 elapsed_seconds = 0
 last_polled_time = est_now()
-server = JavaServer.lookup("play.mcbusinesscraft.com")
+server = JavaServer.lookup(ip)
 status = server.status()
 player_count = status.players.online
 daily_playtime = 0
@@ -88,7 +89,7 @@ while(True):
 
 	if minute is not est_now().minute:
 		minute = est_now().minute
-		status = bc.status()
+		status = server.status()
 		if status.players.online is not player_count:
 			now = est_now()
 			current_time = f"{now.hour}:{now.minute}:{now.second}"
