@@ -36,14 +36,14 @@ print("Success.\n")
 tz = datetime.timezone(datetime.timedelta(hours = -5), "EST")
 dt = datetime.datetime(1, 1, 1, tzinfo=tz)
 print(f"Operating using {tz.tzname(dt)} time.")
-def est_now():
+def tz_now():
 	global tz
 	return datetime.datetime.now(tz)
 
-day = est_now().day
-minute = est_now().minute
+day = tz_now().day
+minute = tz_now().minute
 elapsed_seconds = 0
-last_polled_time = est_now()
+last_polled_time = tz_now()
 server = JavaServer.lookup(ip)
 status = server.status()
 player_count = status.players.online
@@ -55,7 +55,7 @@ def write_to_file():
 	global elapsed_seconds
 	global wb
 	global ws
-	now = est_now()
+	now = tz_now()
 	date = f"{now.year}-{now.month}-{now.day}"
 	increment()
 	ws.append([date, elapsed_seconds/60])
@@ -68,13 +68,13 @@ def write_to_file():
 def increment():
 	global last_polled_time
 	global elapsed_seconds
-	now = est_now()
+	now = tz_now()
 	timedelta = now - last_polled_time
 	elapsed_seconds += timedelta.total_seconds() * player_count
 	last_polled_time = now
 
 while(True):
-	if day is not est_now().day:
+	if day is not tz_now().day:
 		print("Date rollover detected. Writing latest statistics to excel spreadsheet")
 		write_to_file()
 
@@ -87,11 +87,11 @@ while(True):
 # general picture of player activity.
 # ---------------------------------------------------------------------------------
 
-	if minute is not est_now().minute:
-		minute = est_now().minute
+	if minute is not tz_now().minute:
+		minute = tz_now().minute
 		status = server.status()
 		if status.players.online is not player_count:
-			now = est_now()
+			now = tz_now()
 			current_time = f"{now.hour}:{now.minute}:{now.second}"
 			print(f"[{current_time}] Player count changed. Incrementing elapsed time. Player count is now {status.players.online}.")
 			increment()
