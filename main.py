@@ -48,6 +48,7 @@ server = JavaServer.lookup(ip)
 status = server.status()
 player_count = status.players.online
 daily_playtime = 0
+server_online = True
 
 def write_to_file():
 	global day
@@ -72,7 +73,6 @@ def increment():
 	timedelta = now - last_polled_time
 	elapsed_seconds += timedelta.total_seconds() * player_count
 	last_polled_time = now
-
 while(True):
 	if day is not tz_now().day:
 		print("Date rollover detected. Writing latest statistics to excel spreadsheet")
@@ -89,11 +89,18 @@ while(True):
 
 	if minute is not tz_now().minute:
 		minute = tz_now().minute
-		status = server.status()
+		try: 
+			status = server.status()
+			server_online = True
+		except:
+			server_online = False
+			player_count = 0
+			continue
 		if status.players.online is not player_count:
 			now = tz_now()
 			current_time = f"{now.hour}:{now.minute}:{now.second}"
 			print(f"[{current_time}] Player count changed. Incrementing elapsed time. Player count is now {status.players.online}.")
 			increment()
 			player_count = status.players.online
+			
 
