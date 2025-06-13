@@ -16,7 +16,7 @@ path = os.environ["PTBOT_PATH"]
 ip = os.environ["PTBOT_IP"]
 
 print("Loading OneDrive data...")
-os.system("rm /root/OneDrive/BCBot/BCPlaytimeData.xlsx")
+os.system(f"rm {path}")
 os.system("onedrive --sync")
 print("Success.\n")
 
